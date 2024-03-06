@@ -1,0 +1,82 @@
+%Lab 3-4 Nijash Sooriyakumaran 400185321
+
+clear;
+close all;
+%Initialize constants
+epsilon = 8.854e-12;
+mu = 1/(4*pi*10^-7);
+%Choose values of a and b such that a>b
+a = 5;
+b = 3;
+%Assume these to be constant as well
+H_naught = 1;
+w = 2e7; 
+k = w^2*epsilon^2*mu^2;
+beta=sqrt(k-(pi/a)^2);
+gamma = 1j*beta;
+h = k + gamma;
+
+
+%Meshgrid for magnetic field lines
+[xPoint, yPoint, zPoint] = meshgrid(linspace(-10,10,10),linspace(-10,10,20), linspace(-10,10,20));
+
+%Contour line meshgrid
+[xPointM, yPointM, zPointM] = meshgrid(linspace(-10,10,20),linspace(-10,10,20), linspace(-10,10,20));
+
+%Field expressions initializations
+Hx = real((gamma/h)*(pi/a)*H_naught.*(sin((pi.*xPointM)/a)).*exp(-gamma.*zPointM));
+Hz = real(H_naught*cos(pi*xPointM/a).*exp(-gamma.*zPointM));
+Ey = real((-1j*w*mu/h)*(pi/a)*H_naught*(sin((pi.*xPoint)/a)).*exp(-gamma.*zPoint));  
+% figure
+% quiver(xPoint, yPoint, zPoint, Ey)
+% hold on;
+% quiver(xPointM, yPointM, zPointM, Hz)
+% title("Electric and Magnetic field lines, front view")
+% legend("Electric field","Magnetic Field")
+
+%Surface Charge Density Plotting
+
+%Left and right surfaces have zero charge density; refer to analytical
+
+%No need to take dot product here as Ey is in same direction as 
+%normal vector of top surface
+top_surface = -epsilon.*Ey;
+bottom_surface = -top_surface;
+
+%Could not get quiver or streamline to work.. sorry about that
+
+% figure
+% quiver(xPoint, yPoint, zPoint, top_surface)
+% hold on;
+% title("Surface charge density, Top Surface")
+% legend("Surface Charge Density")
+
+%Note: Only one figure is given in submission as bottom and top look
+%identical
+
+% quiver(xPoint, yPoint, zPoint, bottom_surface)
+% title("Surface charge density, Bottom Surface")
+% legend("Surface Charge Density")
+
+%Surface Current 
+
+%Top Surface Current
+%Found through cross products
+K_top_x = Hz;
+K_top_z = -Hx;
+quiver(xPointM, zPointM, K_top_x, K_top_z)
+title("Surface Current of Top")
+legend("Current")
+
+K_bot_x = -Hz;
+K_bot_z = Hx;
+% quiver(xPointM, zPointM, K_bot_x, K_bot_z)
+% title("Surface Current of Bottom")
+% legend("Current")
+
+%Note that K_left = K_right; refer to analytical
+K_left = H_naught.*exp(-gamma.*zPointM);
+% figure
+% quiver(yPointM, K_left)
+% title("Surface Current, Left or Right")
+% legend("Current")
